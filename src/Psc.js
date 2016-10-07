@@ -61,8 +61,9 @@ module.exports.compile = compile;
 
 function waitForModules(_compilation) {
   function isReady() {
-    for (var i = 0; i < modules.length; i++) {
-      var module = modules[i]
+    const modules = _compilation.modules
+    for (let i = 0; i < modules.length; i++) {
+      const module = modules[i]
       if (module.building && /\.purs$/.test(module.rawRequest)) {
         return false
       }
