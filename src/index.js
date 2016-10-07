@@ -94,6 +94,10 @@ module.exports = function purescriptLoader(source, map) {
   debug('loader called', psModule.name)
 
   if (options.bundle) {
+    if (cache.isBundlingStarted) {
+      callback(new Error('PureScript bundling is already started, cannot add module ' + psModule.name))
+      return
+    }
     cache.bundleModules.push(psModule.name)
   }
 
@@ -114,7 +118,7 @@ module.exports = function purescriptLoader(source, map) {
   cache.deferred.push(psModule)
 
   if (!cache.compilationStarted) {
-    return Psc.compile(psModule)
+    return Psc.compile(psModule, this._compilation)
        .then(() => PsModuleMap.makeMap(options.src).then(map => {
          debug('rebuilt module map');
          cache.psModuleMap = map;
