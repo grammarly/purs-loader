@@ -64,7 +64,7 @@ function waitForModules(_compilation) {
     const modules = _compilation.modules
     for (let i = 0; i < modules.length; i++) {
       const module = modules[i]
-      if (module.building && /\.purs$/.test(module.rawRequest)) {
+      if (module.building && !/\.purs$/.test(module.rawRequest)) {
         return false
       }
     }
