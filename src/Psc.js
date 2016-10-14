@@ -75,6 +75,7 @@ function waitForModules(_compilation) {
     if (isReady()) {
       resolve()
     } else {
+      // TODO replace busy waiting with event subscription
       setTimeout(() => {
         check(resolve, reject)
       }, 200)
