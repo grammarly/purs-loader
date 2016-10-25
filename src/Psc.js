@@ -97,7 +97,7 @@ function bundle(options, cache) {
   cache.isBundlingStarted = true
 
   const stdout = []
-  const stderr = cache.bundle = []
+  const stderr = []
 
   const args = dargs(Object.assign({
     _: [path.join(options.output, '*', '*.js')],
@@ -121,7 +121,6 @@ function bundle(options, cache) {
         cache.errors = (cache.errors || '') + stderr.join('')
         return reject(true)
       }
-      cache.bundle = stderr
       resolve(
         fs
           .appendFileAsync(options.bundleOutput, `module.exports = ${options.bundleNamespace}`)
