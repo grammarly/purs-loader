@@ -159,7 +159,7 @@ function toJavaScript(psModule) {
   const options = psModule.options
   const cache = psModule.cache
   const bundlePath = path.resolve(options.bundleOutput)
-  const jsPath = cache.bundle ? bundlePath : psModule.jsPath
+  const jsPath = options.bundle ? bundlePath : psModule.jsPath
 
   debug('loading JavaScript for', psModule.name)
 

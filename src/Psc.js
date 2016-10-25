@@ -38,7 +38,6 @@ function compile(psModule, _compilation) {
 
     compilation.on('close', code => {
       console.log('Finished compiling PureScript.')
-      cache.compilationFinished = true
       if (code !== 0) {
         cache.errors = stderr.join('')
         reject(true)
@@ -54,7 +53,12 @@ function compile(psModule, _compilation) {
         .then(() => bundle(options, cache))
         .then(() => psModule)
     }
+    cache.compilationFinished = true
     return psModule
+  })
+  .catch(err => {
+    cache.compilationFinished = true
+    return err
   })
 }
 module.exports.compile = compile;
@@ -86,8 +90,9 @@ function waitForModules(_compilation) {
 }
 
 function bundle(options, cache) {
-  // TODO looks to be incorrect, must not go further if bundling is started
-  if (cache.bundle) return Promise.resolve(cache.bundle)
+  if (cache.isBundlingStarted) {
+    throw new Error('Duplicate PureScript bundling attempt')
+  }
 
   cache.isBundlingStarted = true
 
@@ -117,7 +122,13 @@ function bundle(options, cache) {
         return reject(true)
       }
       cache.bundle = stderr
-      resolve(fs.appendFileAsync(options.bundleOutput, `module.exports = ${options.bundleNamespace}`))
+      resolve(
+        fs
+          .appendFileAsync(options.bundleOutput, `module.exports = ${options.bundleNamespace}`)
+          .then(() => {
+            cache.compilationFinished = true
+          })
+      )
     })
   }))
 }
